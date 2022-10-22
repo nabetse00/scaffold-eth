@@ -81,6 +81,7 @@ describe("🚩 Challenge 3: ⚖️ 🪙 Simple DEX", function () {
         });
 
         it("Should send less eth after the first trade (tokenToEth() called)", async function () {
+          console.log("here");
           let tx1 = await dexContract.tokenToEth(ethers.utils.parseEther("1"));
           const tx1_receipt = await tx1.wait();
 
@@ -92,7 +93,7 @@ describe("🚩 Challenge 3: ⚖️ 🪙 Simple DEX", function () {
               txReceipt.logs.find(log => log.address == dexContract.address)
             );
             const args = logDescr.args;
-            return args[1]; // index of ethAmount in event
+            return args[3]; // index of ethAmount in event
           }
           const ethSent_1 =  getEthAmount(tx1_receipt);
           const ethSent_2 =  getEthAmount(tx2_receipt);

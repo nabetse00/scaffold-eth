@@ -1,15 +1,15 @@
 import { List } from "antd";
 import { useEventListener } from "eth-hooks/events/useEventListener";
-import { Address, TokenBalance } from "../components";
+import { Address, TokenBalance } from ".";
 
 /*
   ~ What it does? ~
 
-  Displays a lists of events
+  Displays a lists of approved events
 
   ~ How can I use? ~
 
-  <Events
+  <ApprovedEvents
     contracts={readContracts}
     contractName="YourContract"
     eventName="SetPurpose"
@@ -19,24 +19,16 @@ import { Address, TokenBalance } from "../components";
   />
 */
 
-export default function Events({ contracts, contractName, eventName, localProvider, mainnetProvider, startBlock }) {
+export default function ApprovedEvents({ contracts, contractName, eventName, localProvider, mainnetProvider, startBlock }) {
   // 📟 Listen for broadcast events
   const events = useEventListener(contracts, contractName, eventName, localProvider, startBlock);
-  
   return (
     <div style={{ width: 600, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
       <h2>
         {eventName} Events
         <br />
-        {eventName === "EthToTokenSwap"
-          ? " ⟠ -->🎈 Address | Trade | AmountIn | AmountOut"
-          : eventName === "TokenToEthSwap"
-          ? "🎈-->⟠ Address | Trade | AmountOut | AmountIn"
-          : eventName === "LiquidityProvided"
-          ? "➕ Address | Liquidity Minted | Eth In | Balloons In"
-          : eventName === "LiquidityRemoved" 
-          ? "➖ Address | Liquidity Withdrawn | ETH out | Balloons Out "
-          : "🆗🎈 Address | Approved | ETH out | Balloons Out "
+        {
+          "🆗🎈 Owner | Spender | Balloons Amount | Status"
         }
       </h2>
       <List
@@ -46,13 +38,11 @@ export default function Events({ contracts, contractName, eventName, localProvid
           return (
             <List.Item key={item.blockNumber + "_" + item.args[0].toString()}>
               <Address address={item.args[0]} ensProvider={mainnetProvider} fontSize={16} />
-              {item.args[1].toString().indexOf("E") == -1 ? (
-                <TokenBalance balance={item.args[1]} provider={localProvider} />
-              ) : (
-                `${item.args[1].toString()}`
-              )}
+              <Address address={item.args[1]} ensProvider={mainnetProvider} fontSize={16} />
               <TokenBalance balance={item.args[2]} provider={localProvider} />
-              <TokenBalance balance={item.args[3]} provider={localProvider} />
+              <span>
+                {item.args[3] ? "👍" : "👎"}
+              </span>
             </List.Item>
           );
         }}
